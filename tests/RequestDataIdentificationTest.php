@@ -21,7 +21,7 @@ class RequestDataIdentificationTest extends TestCase
         ]);
 
         Route::middleware(InitializeTenancyByRequestData::class)->get('/test', function () {
-            return 'Tenant id: ' . tenant('id');
+            return 'Tenant id: '.tenant('id');
         });
     }
 
@@ -59,7 +59,7 @@ class RequestDataIdentificationTest extends TestCase
 
         $this
             ->withoutExceptionHandling()
-            ->get('test?tenant=' . $tenant->id)
+            ->get('test?tenant='.$tenant->id)
             ->assertSee($tenant->id);
     }
 }

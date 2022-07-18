@@ -57,7 +57,7 @@ class TenantAssetTest extends TestCase
         $tenant = Tenant::create();
         tenancy()->initialize($tenant);
 
-        $filename = 'testfile' . $this->randomString(10);
+        $filename = 'testfile'.$this->randomString(10);
         Storage::disk('public')->put($filename, 'bar');
         $path = storage_path("app/public/$filename");
 

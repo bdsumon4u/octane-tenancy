@@ -8,10 +8,12 @@ use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 use Stancl\JobPipeline\JobPipeline;
+use Stancl\Tenancy\Controllers\TenantAssetsController;
 use Stancl\Tenancy\Events;
 use Stancl\Tenancy\Jobs;
 use Stancl\Tenancy\Listeners;
 use Stancl\Tenancy\Middleware;
+use Stancl\Tenancy\Middleware\InitializeTenancyByDomainOrSubdomain;
 
 class TenancyServiceProvider extends ServiceProvider
 {
@@ -94,7 +96,9 @@ class TenancyServiceProvider extends ServiceProvider
 
     public function register()
     {
-        //
+        Route::pattern('domain', '\w+\.?\w+\.\w+');
+        TenantAssetsController::$tenancyMiddleware = InitializeTenancyByDomainOrSubdomain::class;
+        $this->app->make(\Illuminate\Contracts\Http\Kernel::class)->pushMiddleware(TenantAssetsController::$tenancyMiddleware);
     }
 
     public function boot()
@@ -120,8 +124,14 @@ class TenancyServiceProvider extends ServiceProvider
 
     protected function mapRoutes()
     {
+        if (file_exists($path = base_path('routes/universal.php'))) {
+            Route::middleware(['web', 'universal', InitializeTenancyByDomainOrSubdomain::class])->group($path);
+        }
+
         if (file_exists(base_path('routes/tenant.php'))) {
-            Route::namespace(static::$controllerNamespace)
+            Route::as('tenant.')
+                ->namespace(static::$controllerNamespace)
+                ->middleware(['web', Middleware\PreventAccessFromCentralDomains::class, Middleware\IgnoreDomainParameter::class])
                 ->group(base_path('routes/tenant.php'));
         }
     }

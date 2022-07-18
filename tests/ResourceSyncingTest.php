@@ -45,7 +45,7 @@ class ResourceSyncingTest extends TestCase
         })->toListener());
 
         DatabaseConfig::generateDatabaseNamesUsing(function () {
-            return 'db' . Str::random(16);
+            return 'db'.Str::random(16);
         });
 
         Event::listen(TenancyInitialized::class, BootstrapTenancy::class);
@@ -56,8 +56,8 @@ class ResourceSyncingTest extends TestCase
 
         $this->artisan('migrate', [
             '--path' => [
-                __DIR__ . '/Etc/synced_resource_migrations',
-                __DIR__ . '/Etc/synced_resource_migrations/users',
+                __DIR__.'/Etc/synced_resource_migrations',
+                __DIR__.'/Etc/synced_resource_migrations/users',
             ],
             '--realpath' => true,
         ])->assertExitCode(0);
@@ -66,7 +66,7 @@ class ResourceSyncingTest extends TestCase
     protected function migrateTenants()
     {
         $this->artisan('tenants:migrate', [
-            '--path' => __DIR__ . '/Etc/synced_resource_migrations/users',
+            '--path' => __DIR__.'/Etc/synced_resource_migrations/users',
             '--realpath' => true,
         ])->assertExitCode(0);
     }
@@ -589,7 +589,9 @@ class CentralUser extends Model implements SyncMaster
     use ResourceSyncing, CentralConnection;
 
     protected $guarded = [];
+
     public $timestamps = false;
+
     public $table = 'users';
 
     public function tenants(): BelongsToMany
@@ -633,7 +635,9 @@ class ResourceUser extends Model implements Syncable
     use ResourceSyncing;
 
     protected $table = 'users';
+
     protected $guarded = [];
+
     public $timestamps = false;
 
     public function getGlobalIdentifierKey()

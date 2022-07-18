@@ -13,7 +13,6 @@ use Stancl\Tenancy\Events;
 /**
  * @property string $domain
  * @property string $tenant_id
- *
  * @property-read Tenant|Model $tenant
  */
 class Domain extends Model implements Contracts\Domain

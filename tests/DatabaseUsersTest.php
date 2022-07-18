@@ -41,7 +41,7 @@ class DatabaseUsersTest extends TestCase
     public function users_are_created_when_permission_controlled_mysql_manager_is_used()
     {
         $tenant = new Tenant([
-            'id' => 'foo' . Str::random(10),
+            'id' => 'foo'.Str::random(10),
         ]);
         $tenant->database()->makeCredentials();
 
@@ -57,7 +57,7 @@ class DatabaseUsersTest extends TestCase
     /** @test */
     public function a_tenants_database_cannot_be_created_when_the_user_already_exists()
     {
-        $username = 'foo' . Str::random(8);
+        $username = 'foo'.Str::random(8);
         $tenant = Tenant::create([
             'tenancy_db_username' => $username,
         ]);
@@ -90,7 +90,7 @@ class DatabaseUsersTest extends TestCase
         ];
 
         $tenant = Tenant::create([
-            'tenancy_db_username' => $user = 'user' . Str::random(8),
+            'tenancy_db_username' => $user = 'user'.Str::random(8),
         ]);
 
         $query = DB::connection('mysql')->select("SHOW GRANTS FOR `{$tenant->database()->getUsername()}`@`%`")[1];
@@ -112,7 +112,7 @@ class DatabaseUsersTest extends TestCase
         Event::listen(TenancyInitialized::class, BootstrapTenancy::class);
 
         $tenant = Tenant::create([
-            'id' => 'foo' . Str::random(10),
+            'id' => 'foo'.Str::random(10),
         ]);
 
         $this->assertTrue($tenant->database()->manager() instanceof MySQLDatabaseManager);

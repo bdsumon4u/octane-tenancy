@@ -4,33 +4,31 @@ declare(strict_types=1);
 
 namespace Stancl\Tenancy\Tests;
 
-use Closure;
 use Exception;
-use Illuminate\Support\Str;
 use Illuminate\Bus\Queueable;
-use Spatie\Valuestore\Valuestore;
-use Illuminate\Support\Facades\DB;
-use Stancl\Tenancy\Tests\Etc\User;
-use Stancl\JobPipeline\JobPipeline;
-use Stancl\Tenancy\Tests\Etc\Tenant;
-use Illuminate\Support\Facades\Event;
-use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Facades\Schema;
-use Stancl\Tenancy\Events\TenancyEnded;
-use Stancl\Tenancy\Jobs\CreateDatabase;
-use Illuminate\Queue\InteractsWithQueue;
-use Stancl\Tenancy\Events\TenantCreated;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\Events\JobProcessed;
 use Illuminate\Queue\Events\JobProcessing;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Bus\Dispatchable;
-use PDO;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Str;
+use Spatie\Valuestore\Valuestore;
+use Stancl\JobPipeline\JobPipeline;
+use Stancl\Tenancy\Bootstrappers\DatabaseTenancyBootstrapper;
+use Stancl\Tenancy\Bootstrappers\QueueTenancyBootstrapper;
+use Stancl\Tenancy\Events\TenancyEnded;
 use Stancl\Tenancy\Events\TenancyInitialized;
+use Stancl\Tenancy\Events\TenantCreated;
+use Stancl\Tenancy\Jobs\CreateDatabase;
 use Stancl\Tenancy\Listeners\BootstrapTenancy;
 use Stancl\Tenancy\Listeners\RevertToCentralContext;
-use Stancl\Tenancy\Bootstrappers\QueueTenancyBootstrapper;
-use Stancl\Tenancy\Bootstrappers\DatabaseTenancyBootstrapper;
+use Stancl\Tenancy\Tests\Etc\Tenant;
+use Stancl\Tenancy\Tests\Etc\User;
 
 class QueueTest extends TestCase
 {
@@ -64,12 +62,12 @@ class QueueTest extends TestCase
 
     protected function createValueStore(): void
     {
-        $valueStorePath = __DIR__ . '/Etc/tmp/queuetest.json';
+        $valueStorePath = __DIR__.'/Etc/tmp/queuetest.json';
 
         if (! file_exists($valueStorePath)) {
             // The directory sometimes goes missing as well when the file is deleted in git
-            if (! is_dir(__DIR__ . '/Etc/tmp')) {
-                mkdir(__DIR__ . '/Etc/tmp');
+            if (! is_dir(__DIR__.'/Etc/tmp')) {
+                mkdir(__DIR__.'/Etc/tmp');
             }
 
             file_put_contents($valueStorePath, '');
@@ -182,7 +180,7 @@ class QueueTest extends TestCase
 
         $this->assertSame(0, DB::connection('central')->table('failed_jobs')->count());
 
-        $this->assertSame('The current tenant id is: ' . $tenant->id, $this->valuestore->get('tenant_id'));
+        $this->assertSame('The current tenant id is: '.$tenant->id, $this->valuestore->get('tenant_id'));
 
         $tenant->run(function () use ($user) {
             $this->assertSame('Bar', $user->fresh()->name);
@@ -233,7 +231,7 @@ class QueueTest extends TestCase
 
         $this->assertSame(0, DB::connection('central')->table('failed_jobs')->count());
 
-        $this->assertSame('The current tenant id is: ' . $tenant->id, $this->valuestore->get('tenant_id')); // job succeeded
+        $this->assertSame('The current tenant id is: '.$tenant->id, $this->valuestore->get('tenant_id')); // job succeeded
 
         $tenant->run(function () use ($user) {
             $this->assertSame('Bar', $user->fresh()->name);
@@ -292,7 +290,7 @@ class TestJob implements ShouldQueue
             assert($this->user->getConnectionName() === 'tenant');
         }
 
-        $this->valuestore->put('tenant_id', 'The current tenant id is: ' . tenant('id'));
+        $this->valuestore->put('tenant_id', 'The current tenant id is: '.tenant('id'));
 
         if ($userName = $this->valuestore->get('userName')) {
             $this->user->update(['name' => $userName]);

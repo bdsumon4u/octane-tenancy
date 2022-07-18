@@ -39,7 +39,7 @@ class TenantUserImpersonationTest extends TestCase
         parent::setUp();
 
         $this->artisan('migrate', [
-            '--path' => __DIR__ . '/../assets/impersonation-migrations',
+            '--path' => __DIR__.'/../assets/impersonation-migrations',
             '--realpath' => true,
         ])->assertExitCode(0);
 
@@ -80,8 +80,8 @@ class TenantUserImpersonationTest extends TestCase
             }
 
             Route::get('/dashboard', function () use ($authGuard) {
-                return 'You are logged in as ' . auth()->guard($authGuard)->user()->name;
-            })->middleware('auth:' . $authGuard);
+                return 'You are logged in as '.auth()->guard($authGuard)->user()->name;
+            })->middleware('auth:'.$authGuard);
 
             Route::get('/impersonate/{token}', function ($token) {
                 return UserImpersonation::makeResponse($token);
@@ -113,7 +113,7 @@ class TenantUserImpersonationTest extends TestCase
 
         // We impersonate the user
         $token = tenancy()->impersonate($tenant, $user->id, '/dashboard');
-        $this->get('http://foo.localhost/impersonate/' . $token->token)
+        $this->get('http://foo.localhost/impersonate/'.$token->token)
             ->assertRedirect('http://foo.localhost/dashboard');
 
         // Now we try to visit the dashboard directly, after impersonating the user.
@@ -131,7 +131,7 @@ class TenantUserImpersonationTest extends TestCase
 
         $tenant = Tenant::create([
             'id' => 'acme',
-            'tenancy_db_name' => 'db' . Str::random(16),
+            'tenancy_db_name' => 'db'.Str::random(16),
         ]);
         $this->migrateTenants();
         $user = $tenant->run(function () {
@@ -148,7 +148,7 @@ class TenantUserImpersonationTest extends TestCase
 
         // We impersonate the user
         $token = tenancy()->impersonate($tenant, $user->id, '/acme/dashboard');
-        $this->get('/acme/impersonate/' . $token->token)
+        $this->get('/acme/impersonate/'.$token->token)
             ->assertRedirect('/acme/dashboard');
 
         // Now we try to visit the dashboard directly, after impersonating the user.
@@ -182,7 +182,7 @@ class TenantUserImpersonationTest extends TestCase
         ]);
 
         $this->followingRedirects()
-            ->get('http://foo.localhost/impersonate/' . $token->token)
+            ->get('http://foo.localhost/impersonate/'.$token->token)
             ->assertStatus(403);
     }
 
@@ -210,7 +210,7 @@ class TenantUserImpersonationTest extends TestCase
         $this->assertNotNull(ImpersonationToken::find($token->token));
 
         $this->followingRedirects()
-            ->get('http://foo.localhost/impersonate/' . $token->token)
+            ->get('http://foo.localhost/impersonate/'.$token->token)
             ->assertSuccessful()
             ->assertSee('You are logged in as Joe');
 
@@ -256,7 +256,7 @@ class TenantUserImpersonationTest extends TestCase
 
         // We impersonate the user
         $token = tenancy()->impersonate($tenant, $user->id, '/dashboard', 'another');
-        $this->get('http://foo.localhost/impersonate/' . $token->token)
+        $this->get('http://foo.localhost/impersonate/'.$token->token)
             ->assertRedirect('http://foo.localhost/dashboard');
 
         // Now we try to visit the dashboard directly, after impersonating the user.
@@ -274,11 +274,13 @@ class TenantUserImpersonationTest extends TestCase
 class ImpersonationUser extends Authenticable
 {
     protected $guarded = [];
+
     protected $table = 'users';
 }
 
 class AnotherImpersonationUser extends Authenticable
 {
     protected $guarded = [];
+
     protected $table = 'users';
 }

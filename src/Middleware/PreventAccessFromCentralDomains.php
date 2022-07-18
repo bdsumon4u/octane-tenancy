@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace Stancl\Tenancy\Middleware;
 
 use Closure;
+use Hotash\Authable\Registrar;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class PreventAccessFromCentralDomains
 {
@@ -18,7 +20,10 @@ class PreventAccessFromCentralDomains
 
     public function handle(Request $request, Closure $next)
     {
-        if (in_array($request->getHost(), config('tenancy.central_domains'))) {
+        $host = $request->getHost();
+        $host = Str::after($host, Registrar::as());
+
+        if (in_array($host, config('tenancy.central_domains'))) {
             $abortRequest = static::$abortRequest ?? function () {
                 abort(404);
             };

@@ -6,6 +6,7 @@ namespace Stancl\Tenancy\Middleware;
 
 use Closure;
 use Exception;
+use Hotash\Authable\Registrar;
 use Illuminate\Http\Response;
 use Illuminate\Support\Str;
 use Stancl\Tenancy\Exceptions\NotASubdomainException;
@@ -19,7 +20,7 @@ class InitializeTenancyBySubdomain extends InitializeTenancyByDomain
      *
      * @var int
      */
-    public static $subdomainIndex = 0;
+    private static $subdomainIndex = 0;
 
     /** @var callable|null */
     public static $onFail;
@@ -33,9 +34,18 @@ class InitializeTenancyBySubdomain extends InitializeTenancyByDomain
      */
     public function handle($request, Closure $next)
     {
-        $subdomain = $this->makeSubdomain($request->getHost());
+        if (Registrar::guard()) {
+            static::$subdomainIndex = 1;
+        } else {
+            static::$subdomainIndex = 0;
+        }
 
-        if (is_object($subdomain) && $subdomain instanceof Exception) {
+        $subdomain = $this->makeSubdomain($request->getHost());
+        if (in_array($subdomain, config('tenancy.central_domains'), true)) {
+            return $next($request);
+        }
+
+        if ($subdomain instanceof Exception) {
             $onFail = static::$onFail ?? function ($e) {
                 throw $e;
             };
@@ -44,7 +54,7 @@ class InitializeTenancyBySubdomain extends InitializeTenancyByDomain
         }
 
         // If a Response instance was returned, we return it immediately.
-        if (is_object($subdomain) && $subdomain instanceof Response) {
+        if ($subdomain instanceof Response) {
             return $subdomain;
         }
 

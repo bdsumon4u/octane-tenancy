@@ -42,7 +42,7 @@ class TenantDatabaseManagerTest extends TestCase
             "tenancy.database.managers.$driver" => $databaseManager,
         ]);
 
-        $name = 'db' . $this->randomString();
+        $name = 'db'.$this->randomString();
 
         $manager = app($databaseManager);
         $manager->setConnection($driver);
@@ -68,7 +68,7 @@ class TenantDatabaseManagerTest extends TestCase
             return $event->tenant;
         })->toListener());
 
-        $database = 'db' . $this->randomString();
+        $database = 'db'.$this->randomString();
 
         $mysqlmanager = app(MySQLDatabaseManager::class);
         $mysqlmanager->setConnection('mysql');
@@ -84,7 +84,7 @@ class TenantDatabaseManagerTest extends TestCase
         $postgresManager = app(PostgreSQLDatabaseManager::class);
         $postgresManager->setConnection('pgsql');
 
-        $database = 'db' . $this->randomString();
+        $database = 'db'.$this->randomString();
         $this->assertFalse($postgresManager->databaseExists($database));
 
         Tenant::create([
@@ -194,9 +194,9 @@ class TenantDatabaseManagerTest extends TestCase
         ]);
         tenancy()->initialize($tenant);
 
-        $schemaConfig = version_compare(app()->version(), '9.0', '>=') ? 
-            config('database.connections.' . config('database.default') . '.search_path') :
-            config('database.connections.' . config('database.default') . '.schema');
+        $schemaConfig = version_compare(app()->version(), '9.0', '>=') ?
+            config('database.connections.'.config('database.default').'.search_path') :
+            config('database.connections.'.config('database.default').'.schema');
 
         $this->assertSame($tenant->database()->getName(), $schemaConfig);
         $this->assertSame($originalDatabaseName, config(['database.connections.pgsql.database']));
@@ -209,7 +209,7 @@ class TenantDatabaseManagerTest extends TestCase
             return $event->tenant;
         })->toListener());
 
-        $name = 'foo' . Str::random(8);
+        $name = 'foo'.Str::random(8);
         $tenant = Tenant::create([
             'tenancy_db_name' => $name,
         ]);
@@ -252,7 +252,7 @@ class TenantDatabaseManagerTest extends TestCase
             return $event->tenant;
         })->toListener());
 
-        $name = 'foo' . Str::random(8);
+        $name = 'foo'.Str::random(8);
         $tenant = Tenant::create([
             'tenancy_db_name' => $name,
             'tenancy_db_connection' => 'mysql2',

@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Stancl\Tenancy\Middleware;
 
 use Closure;
+use Hotash\Authable\Registrar;
+use Illuminate\Support\Str;
 use Stancl\Tenancy\Resolvers\DomainTenantResolver;
 use Stancl\Tenancy\Tenancy;
 
@@ -34,8 +36,11 @@ class InitializeTenancyByDomain extends IdentificationMiddleware
      */
     public function handle($request, Closure $next)
     {
+        $host = $request->getHost();
+        $host = Str::after($host, Registrar::as());
+
         return $this->initializeTenancy(
-            $request, $next, $request->getHost()
+            $request, $next, $host
         );
     }
 }

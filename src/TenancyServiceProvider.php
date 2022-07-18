@@ -20,7 +20,7 @@ class TenancyServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        $this->mergeConfigFrom(__DIR__ . '/../assets/config.php', 'tenancy');
+        $this->mergeConfigFrom(__DIR__.'/../assets/config.php', 'tenancy');
 
         $this->app->singleton(Database\DatabaseManager::class);
 
@@ -59,13 +59,13 @@ class TenancyServiceProvider extends ServiceProvider
             $this->app->bind(Contracts\UniqueIdentifierGenerator::class, $this->app['config']['tenancy.id_generator']);
         }
 
-        $this->app->singleton(Commands\Migrate::class, function ($app) {
+        $this->app->bind(Commands\Migrate::class, function ($app) {
             return new Commands\Migrate($app['migrator'], $app['events']);
         });
-        $this->app->singleton(Commands\Rollback::class, function ($app) {
+        $this->app->bind(Commands\Rollback::class, function ($app) {
             return new Commands\Rollback($app['migrator']);
         });
-        $this->app->singleton(Commands\Seed::class, function ($app) {
+        $this->app->bind(Commands\Seed::class, function ($app) {
             return new Commands\Seed($app['db']);
         });
 
@@ -92,27 +92,27 @@ class TenancyServiceProvider extends ServiceProvider
         ]);
 
         $this->publishes([
-            __DIR__ . '/../assets/config.php' => config_path('tenancy.php'),
+            __DIR__.'/../assets/config.php' => config_path('tenancy.php'),
         ], 'config');
 
         $this->publishes([
-            __DIR__ . '/../assets/migrations/' => database_path('migrations'),
+            __DIR__.'/../assets/migrations/' => database_path('migrations'),
         ], 'migrations');
 
         $this->publishes([
-            __DIR__ . '/../assets/impersonation-migrations/' => database_path('migrations'),
+            __DIR__.'/../assets/impersonation-migrations/' => database_path('migrations'),
         ], 'impersonation-migrations');
 
         $this->publishes([
-            __DIR__ . '/../assets/tenant_routes.stub.php' => base_path('routes/tenant.php'),
+            __DIR__.'/../assets/tenant_routes.stub.php' => base_path('routes/tenant.php'),
         ], 'routes');
 
         $this->publishes([
-            __DIR__ . '/../assets/TenancyServiceProvider.stub.php' => app_path('Providers/TenancyServiceProvider.php'),
+            __DIR__.'/../assets/TenancyServiceProvider.stub.php' => app_path('Providers/TenancyServiceProvider.php'),
         ], 'providers');
 
         if (config('tenancy.routes', true)) {
-            $this->loadRoutesFrom(__DIR__ . '/../assets/routes.php');
+            $this->loadRoutesFrom(__DIR__.'/../assets/routes.php');
         }
 
         $this->app->singleton('globalUrl', function ($app) {

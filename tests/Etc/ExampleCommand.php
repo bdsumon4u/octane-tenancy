@@ -29,7 +29,7 @@ class ExampleCommand extends Command
             'password' => bcrypt('password'),
         ]);
 
-        $this->line("User's name is " . User::find(999)->name);
+        $this->line("User's name is ".User::find(999)->name);
         $this->line($this->argument('a'));
         $this->line($this->option('c'));
     }

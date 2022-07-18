@@ -28,7 +28,7 @@ class CacheManagerTest extends TestCase
     {
         tenancy()->initialize(Tenant::create());
 
-        $this->assertArrayIsSubset([config('tenancy.cache.tag_base') . tenant('id')], cache()->tags('foo')->getTags()->getNames());
+        $this->assertArrayIsSubset([config('tenancy.cache.tag_base').tenant('id')], cache()->tags('foo')->getTags()->getNames());
     }
 
     /** @test */
@@ -36,7 +36,7 @@ class CacheManagerTest extends TestCase
     {
         tenancy()->initialize(Tenant::create());
 
-        $expected = [config('tenancy.cache.tag_base') . tenant('id'), 'foo', 'bar'];
+        $expected = [config('tenancy.cache.tag_base').tenant('id'), 'foo', 'bar'];
         $this->assertEquals($expected, cache()->tags(['foo', 'bar'])->getTags()->getNames());
     }
 
@@ -45,7 +45,7 @@ class CacheManagerTest extends TestCase
     {
         tenancy()->initialize(Tenant::create());
 
-        $expected = [config('tenancy.cache.tag_base') . tenant('id'), 'foo'];
+        $expected = [config('tenancy.cache.tag_base').tenant('id'), 'foo'];
         $this->assertEquals($expected, cache()->tags('foo')->getTags()->getNames());
     }
 

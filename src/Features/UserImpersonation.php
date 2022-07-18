@@ -31,8 +31,8 @@ class UserImpersonation implements Feature
     /**
      * Impersonate a user and get an HTTP redirect response.
      *
-     * @param string|ImpersonationToken $token
-     * @param int $ttl
+     * @param  string|ImpersonationToken  $token
+     * @param  int  $ttl
      * @return RedirectResponse
      */
     public static function makeResponse($token, int $ttl = null): RedirectResponse

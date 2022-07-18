@@ -116,14 +116,14 @@ class TenantModelTest extends TestCase
 
         $tenant1 = Tenant::create([
             'id' => 'foo',
-            'tenancy_db_name' => 'db' . Str::random(16),
+            'tenancy_db_name' => 'db'.Str::random(16),
         ]);
 
         tenancy()->initialize($tenant1);
 
         $tenant2 = Tenant::create([
             'id' => 'bar',
-            'tenancy_db_name' => 'db' . Str::random(16),
+            'tenancy_db_name' => 'db'.Str::random(16),
         ]);
 
         tenancy()->end();
@@ -172,6 +172,7 @@ class MyTenant extends Tenant
 class AnotherTenant extends Model implements Contracts\Tenant
 {
     protected $guarded = [];
+
     protected $table = 'tenants';
 
     public function getTenantKeyName(): string

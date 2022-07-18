@@ -6,7 +6,7 @@ use Stancl\Tenancy\Database\Models\Domain;
 use Stancl\Tenancy\Database\Models\Tenant;
 
 return [
-    'tenant_model' => Tenant::class,
+    'tenant_model' => \App\Models\Tenant::class,
     'id_generator' => Stancl\Tenancy\UUIDGenerator::class,
 
     'domain_model' => Domain::class,
@@ -16,10 +16,7 @@ return [
      *
      * Only relevant if you're using the domain or subdomain identification middleware.
      */
-    'central_domains' => [
-        '127.0.0.1',
-        'localhost',
-    ],
+    'central_domains' => [guard_url()],
 
     /**
      * Tenancy bootstrappers are executed when tenancy is initialized.
@@ -51,8 +48,8 @@ return [
          * Tenant database names are created like this:
          * prefix + tenant_id + suffix.
          */
-        'prefix' => 'tenant',
-        'suffix' => '',
+        'prefix' => 'tenant_',
+        'suffix' => '_db',
 
         /**
          * TenantDatabaseManagers are classes that handle the creation & deletion of tenant databases.
@@ -88,7 +85,7 @@ return [
      * You can clear cache selectively by specifying the tag.
      */
     'cache' => [
-        'tag_base' => 'tenant', // This tag_base, followed by the tenant_id, will form a tag that will be applied on each cache call.
+        'tag_base' => 'tenant_', // This tag_base, followed by the tenant_id, will form a tag that will be applied on each cache call.
     ],
 
     /**
@@ -99,7 +96,7 @@ return [
         /**
          * Each disk listed in the 'disks' array will be suffixed by the suffix_base, followed by the tenant_id.
          */
-        'suffix_base' => 'tenant',
+        'suffix_base' => 'tenant_',
         'disks' => [
             'local',
             'public',
@@ -148,7 +145,7 @@ return [
      * either using the Redis facade or by injecting it as a dependency.
      */
     'redis' => [
-        'prefix_base' => 'tenant', // Each key in Redis will be prepended by this prefix_base, followed by the tenant id.
+        'prefix_base' => 'tenant_', // Each key in Redis will be prepended by this prefix_base, followed by the tenant id.
         'prefixed_connections' => [ // Redis connections whose keys are prefixed, to separate one tenant's keys from another.
             // 'default',
         ],
@@ -163,11 +160,11 @@ return [
      * understand which ones you want to enable.
      */
     'features' => [
-        // Stancl\Tenancy\Features\UserImpersonation::class,
-        // Stancl\Tenancy\Features\TelescopeTags::class,
-        // Stancl\Tenancy\Features\UniversalRoutes::class,
-        // Stancl\Tenancy\Features\TenantConfig::class, // https://tenancyforlaravel.com/docs/v3/features/tenant-config
-        // Stancl\Tenancy\Features\CrossDomainRedirect::class, // https://tenancyforlaravel.com/docs/v3/features/cross-domain-redirect
+        Stancl\Tenancy\Features\UserImpersonation::class,
+        Stancl\Tenancy\Features\TelescopeTags::class,
+        Stancl\Tenancy\Features\UniversalRoutes::class,
+        Stancl\Tenancy\Features\TenantConfig::class, // https://tenancyforlaravel.com/docs/v3/features/tenant-config
+        Stancl\Tenancy\Features\CrossDomainRedirect::class, // https://tenancyforlaravel.com/docs/v3/features/cross-domain-redirect
     ],
 
     /**
@@ -192,7 +189,7 @@ return [
      * Parameters used by the tenants:seed command.
      */
     'seeder_parameters' => [
-        '--class' => 'DatabaseSeeder', // root seeder class
-        // '--force' => true,
+        '--class' => 'Database\Seeders\Tenancy\DatabaseSeeder', // tenancy seeder class
+        '--force' => true,
     ],
 ];
