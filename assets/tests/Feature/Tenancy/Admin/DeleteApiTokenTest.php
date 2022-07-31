@@ -3,6 +3,7 @@
 namespace Tests\Feature\Tenancy\Admin;
 
 use App\Models\Admin;
+use Hotash\Authable\Registrar;
 use Illuminate\Support\Str;
 use Laravel\Jetstream\Features;
 use Tests\RefreshTenantDatabase as RefreshDatabase;
@@ -18,7 +19,7 @@ class DeleteApiTokenTest extends TestCase
 
     public function test_api_tokens_can_be_deleted()
     {
-        if (! Features::hasApiFeatures()) {
+        if (! in_array(Features::api(), Registrar::features(guard: $this->guard, key: 'jetstream'))) {
             return $this->markTestSkipped('API support is not enabled.');
         }
 

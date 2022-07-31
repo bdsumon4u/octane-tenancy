@@ -3,6 +3,7 @@
 namespace Tests\Feature\Tenancy\Admin;
 
 use App\Models\Admin;
+use Hotash\Authable\Registrar;
 use Laravel\Jetstream\Features;
 use Tests\RefreshTenantDatabase as RefreshDatabase;
 use Tests\TestCase;
@@ -17,7 +18,7 @@ class CreateApiTokenTest extends TestCase
 
     public function test_api_tokens_can_be_created()
     {
-        if (! Features::hasApiFeatures()) {
+        if (! in_array(Features::api(), Registrar::features(guard: $this->guard, key: 'jetstream'))) {
             return $this->markTestSkipped('API support is not enabled.');
         }
 

@@ -3,6 +3,8 @@
 namespace Tests\Feature\Tenancy\Admin;
 
 use App\Models\Admin;
+use Hotash\Authable\Registrar;
+use Laravel\Fortify\Features;
 use Tests\RefreshTenantDatabase as RefreshDatabase;
 use Tests\TestCase;
 
@@ -16,6 +18,10 @@ class TwoFactorAuthenticationSettingsTest extends TestCase
 
     public function test_two_factor_authentication_can_be_enabled()
     {
+        if (! in_array(Features::twoFactorAuthentication(), Registrar::features(guard: $this->guard, key: 'fortify'))) {
+            return $this->markTestSkipped('Two factor authentication is not enabled.');
+        }
+
         $this->actingAs($admin = Admin::factory()->create(), $this->guard);
 
         $this->withSession(['auth.password_confirmed_at' => time()]);
@@ -28,6 +34,10 @@ class TwoFactorAuthenticationSettingsTest extends TestCase
 
     public function test_recovery_codes_can_be_regenerated()
     {
+        if (! in_array(Features::twoFactorAuthentication(), Registrar::features(guard: $this->guard, key: 'fortify'))) {
+            return $this->markTestSkipped('Two factor authentication is not enabled.');
+        }
+
         $this->actingAs($admin = Admin::factory()->create(), $this->guard);
 
         $this->withSession(['auth.password_confirmed_at' => time()]);
@@ -45,6 +55,10 @@ class TwoFactorAuthenticationSettingsTest extends TestCase
 
     public function test_two_factor_authentication_can_be_disabled()
     {
+        if (! in_array(Features::twoFactorAuthentication(), Registrar::features(guard: $this->guard, key: 'fortify'))) {
+            return $this->markTestSkipped('Two factor authentication is not enabled.');
+        }
+
         $this->actingAs($admin = Admin::factory()->create(), $this->guard);
 
         $this->withSession(['auth.password_confirmed_at' => time()]);

@@ -3,6 +3,7 @@
 namespace Tests\Feature\Tenancy\Admin;
 
 use App\Models\Admin;
+use Hotash\Authable\Registrar;
 use Laravel\Jetstream\Features;
 use Tests\RefreshTenantDatabase as RefreshDatabase;
 use Tests\TestCase;
@@ -17,7 +18,7 @@ class DeleteAccountTest extends TestCase
 
     public function test_admin_accounts_can_be_deleted()
     {
-        if (! Features::hasAccountDeletionFeatures()) {
+        if (! in_array(Features::accountDeletion(), Registrar::features(guard: $this->guard, key: 'jetstream'))) {
             return $this->markTestSkipped('Account deletion is not enabled.');
         }
 
